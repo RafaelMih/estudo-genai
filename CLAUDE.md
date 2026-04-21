@@ -24,7 +24,7 @@ FLUXO DE DADOS PRINCIPAL:
   saídas ──────────────────────────────────────► [08_eval] ──► métricas
 
 ORDEM DE APRENDIZADO RECOMENDADA:
-  01_llm → 05_embeddings → vector_store → 02_rag → 03_mcp → 04_agents → 07_prompt_engineering → 08_eval
+  01_llm → 05_embeddings → vector_store → 02_rag → 03_mcp → 04_agents → 07_prompt_engineering → 08_eval → structured_output
 ```
 
 ## Layout do Repositório
@@ -40,6 +40,8 @@ ORDEM DE APRENDIZADO RECOMENDADA:
 | `modules/vector_store/`       | ChromaDB: CRUD, filtros de metadados, persistência                     |
 | `modules/prompt_engineering/` | Técnicas: few-shot, CoT, ToT, structured output                        |
 | `modules/evaluation/`         | Avaliação: RAGAS, LLM-as-judge, BLEU/ROUGE, BERTScore                  |
+| `modules/structured_output/`  | Saídas estruturadas: JSON Schema, Pydantic, tool-based extraction, validação |
+| `docs/sdd/`                   | Artefatos SDD (AIOX): PRDs, architecture docs, stories por módulo      |
 | `notebooks/`                  | Notebooks Jupyter interativos para cada módulo                         |
 | `scripts/`                    | CLIs: ingest, query, agent runner, eval runner                         |
 | `tests/`                      | Testes unitários com mocks (sem chamadas reais à API)                  |
@@ -113,3 +115,77 @@ Cada `modules/0N_nome/README.md` cobre:
 4. **Referências** — papers e links relevantes
 5. **Como rodar** — comando exato para executar standalone
 6. **Exercícios** — extensões sugeridas para aprofundar
+
+---
+
+## AIOX Agents & SDD Workflow
+
+Este projeto usa a metodologia **Spec-Driven Development (SDD)** do framework [AIOX Core](https://github.com/SynkraAI/aiox-core). Novos módulos devem seguir o workflow abaixo antes de qualquer código.
+
+Configuração completa do AIOX: `.claude/CLAUDE.md` e `.aiox-core/`
+
+### Workflow SDD
+
+```
+User Request
+    │
+    ▼
+@analyst  →  Pesquisa: estado-da-arte, dependências, padrões existentes
+    │
+    ▼
+@pm       →  PRD: objetivo, user stories, critérios de aceite, out-of-scope
+    │              Artefato: docs/sdd/<módulo>/prd.md
+    ▼
+@architect →  Architecture Doc: diagrama, classes, fluxo de dados, decisões
+    │              Artefato: docs/sdd/<módulo>/architecture.md
+    ▼
+@sm       →  Stories: decompõe em tasks com critérios e exemplos
+    │              Artefatos: docs/sdd/<módulo>/stories/*.md
+    ▼
+@dev      →  Implementa story por story, marca checkboxes ao completar
+    │
+    ▼
+@qa       →  Testes, validação de critérios de aceite, review de qualidade
+```
+
+### Agentes (adaptados para Python)
+
+| Agente | Persona | Responsabilidade neste projeto |
+|--------|---------|-------------------------------|
+| `@analyst` | Alex | Pesquisa conceitos, papers, dependências Python |
+| `@pm` | Morgan | Escreve PRD em `docs/sdd/<módulo>/prd.md` |
+| `@architect` | Aria | Design técnico em `docs/sdd/<módulo>/architecture.md` |
+| `@sm` | River | Cria stories em `docs/sdd/<módulo>/stories/` |
+| `@dev` | Dex | Implementa em `modules/<módulo>/` seguindo stories |
+| `@qa` | Quinn | Escreve/valida testes em `tests/test_<módulo>/` |
+
+Use `@agent-name *comando` para ativar um agente. Ex: `@pm *write-spec structured_output`
+
+### Comandos Comuns
+
+- `@analyst *research <tópico>` — pesquisa e retorna contexto
+- `@pm *write-spec <módulo>` — cria PRD baseado em research
+- `@architect *create-plan <módulo>` — cria architecture doc
+- `@sm *create-story <módulo> <feature>` — cria story com tasks
+- `@dev *execute-subtask <story> <task>` — implementa task específica
+- `@qa *critique-spec <módulo>` — revisa specs antes de implementar
+
+### Artefatos SDD por Módulo
+
+```
+docs/sdd/
+├── README.md                        # Guia da metodologia SDD neste projeto
+└── <módulo>/
+    ├── prd.md                       # Product Requirements Document
+    ├── architecture.md              # Technical Architecture Document
+    └── stories/
+        ├── 01_<feature>.md          # Story com tasks e critérios de aceite
+        └── ...
+```
+
+### Regras SDD
+
+- **Spec antes de código** — nenhum arquivo Python novo sem story correspondente
+- **Critérios de aceite** — cada story define o contrato que os testes verificam
+- **Checkboxes** — marque `[x]` ao completar cada task na story
+- **Sem invenção** — implemente apenas o que a story especifica
