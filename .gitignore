@@ -1,0 +1,52 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ChromaDB (dados gerados em runtime — reconstruir com scripts/ingest_docs.py)
+modules/vector_store/chroma_db/
+!modules/vector_store/chroma_db/.gitkeep
+
+# Relatórios de eval
+modules/08_eval/reports/*.json
+modules/08_eval/reports/*.csv
+
+# Modelos baixados localmente
+models/
+*.model
+*.bin
+*.safetensors
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

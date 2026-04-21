@@ -1,0 +1,82 @@
+[
+  {
+    "question": "O que é RAG e qual problema ele resolve?",
+    "ground_truth": "RAG (Retrieval-Augmented Generation) é uma técnica que combina busca de informações com geração de texto. Resolve o problema de LLMs terem conhecimento limitado ao treinamento e não acessarem dados privados ou atualizados."
+  },
+  {
+    "question": "Quais são as fases do pipeline RAG?",
+    "ground_truth": "O pipeline RAG tem duas fases: Ingestão (carregamento de documentos, chunking, geração de embeddings e armazenamento no vector store) e Consulta (embedding da query, recuperação dos chunks mais similares, formatação do contexto e geração da resposta pelo LLM)."
+  },
+  {
+    "question": "O que é o mecanismo de atenção em Transformers?",
+    "ground_truth": "O mecanismo de atenção permite que o modelo pese a importância relativa de diferentes partes da entrada. É calculado como Attention(Q,K,V) = softmax(QK^T / sqrt(d_k)) V, onde Q são Queries, K são Keys e V são Values."
+  },
+  {
+    "question": "O que é Multi-Head Attention?",
+    "ground_truth": "Multi-Head Attention projeta Q, K, V em h espaços diferentes (cabeças) e calcula atenção em paralelo, permitindo que o modelo atenda a informações de diferentes subespaços simultaneamente."
+  },
+  {
+    "question": "Qual é a diferença entre self-attention e cross-attention?",
+    "ground_truth": "Em self-attention, Q, K e V vêm da mesma sequência. Em cross-attention (no decoder), as Queries vêm do decoder e Keys/Values vêm do encoder, permitindo que o decoder atenda à sequência de entrada."
+  },
+  {
+    "question": "Quais são as vantagens do RAG sobre fine-tuning?",
+    "ground_truth": "As vantagens do RAG incluem: atualização de conhecimento sem retreinar o modelo, rastreabilidade das fontes, custo muito menor e privacidade dos dados que permanecem na base de conhecimento."
+  },
+  {
+    "question": "O que são embeddings?",
+    "ground_truth": "Embeddings são representações vetoriais de texto em espaços de alta dimensão. Textos semanticamente similares têm embeddings próximos no espaço vetorial."
+  },
+  {
+    "question": "O que é ChromaDB?",
+    "ground_truth": "ChromaDB é um banco de dados vetorial open-source otimizado para busca por similaridade, usado para armazenar e recuperar embeddings eficientemente."
+  },
+  {
+    "question": "O que é MCP (Model Context Protocol)?",
+    "ground_truth": "MCP é um protocolo aberto da Anthropic que padroniza como aplicações fornecem contexto e ferramentas para LLMs. Define primitivos como Tools (funções invocáveis), Resources (dados legíveis) e Prompts (templates reutilizáveis)."
+  },
+  {
+    "question": "Quais são os transportes suportados pelo MCP?",
+    "ground_truth": "O MCP suporta stdio (comunicação via stdin/stdout para servidores locais como subprocess) e SSE (Server-Sent Events para serviços web remotos)."
+  },
+  {
+    "question": "O que é um decorator Python e como é usado em projetos de IA?",
+    "ground_truth": "Decoradores modificam o comportamento de funções usando @. Em projetos de IA são usados para caching (@functools.lru_cache), logging e instrumentação."
+  },
+  {
+    "question": "O que é Pydantic e para que serve?",
+    "ground_truth": "Pydantic é uma biblioteca para validação de dados usando type hints. BaseModel valida dados em runtime. BaseSettings carrega configuração de variáveis de ambiente."
+  },
+  {
+    "question": "O que é complexidade computacional do self-attention?",
+    "ground_truth": "Self-attention tem complexidade O(n²·d) em relação ao comprimento da sequência n e dimensão d, o que é o gargalo para sequências muito longas."
+  },
+  {
+    "question": "O que é Pathlib no Python?",
+    "ground_truth": "pathlib.Path oferece orientação a objetos para manipulação de caminhos de arquivo, sendo superior ao os.path. É amplamente usado em carregadores de documentos."
+  },
+  {
+    "question": "O que são generators no Python e quando usar em LLMs?",
+    "ground_truth": "Generators usam yield para produzir valores sob demanda sem carregar tudo na memória. Em LLMs, o streaming de tokens é implementado como um generator."
+  },
+  {
+    "question": "Para que serve o modelo all-MiniLM-L6-v2?",
+    "ground_truth": "all-MiniLM-L6-v2 é um modelo sentence-transformers que gera embeddings de 384 dimensões. É rápido, leve e bom para uso geral, sendo o padrão do projeto."
+  },
+  {
+    "question": "O que são Protocols em Python typing?",
+    "ground_truth": "Protocol permite definir interfaces estruturais (duck typing). Uma classe satisfaz um Protocol se implementa os métodos requeridos, sem herança explícita."
+  },
+  {
+    "question": "O que é codificação posicional em Transformers?",
+    "ground_truth": "Embeddings posicionais são adicionados aos embeddings de token para injetar informação de posição, já que o Transformer não tem recorrência nem convolução."
+  },
+  {
+    "question": "Cite exemplos de aplicações do mecanismo de atenção.",
+    "ground_truth": "O mecanismo de atenção é usado em tradução automática, modelos de linguagem (GPT, Claude, Llama), visão computacional (ViT), bioinformática (AlphaFold) e processamento de áudio (Whisper)."
+  },
+  {
+    "question": "O que é asyncio e anyio no contexto do MCP?",
+    "ground_truth": "asyncio suporta programação assíncrona em Python. anyio é uma camada de abstração que funciona com asyncio e trio. O SDK do MCP usa anyio para suporte a múltiplos backends assíncronos."
+  }
+]

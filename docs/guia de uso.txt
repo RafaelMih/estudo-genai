@@ -1,0 +1,130 @@
+Guia de Uso do GenAI Study Project
+Pré-requisito: instalar dependências
+No terminal do Jupyter Lab (File → New → Terminal):
+
+
+cd C:\Desenvolvimento\IA\Aprendizado\ProjetoInicial
+pip install -e ".[dev]"
+Módulo 1 — LLM (notebooks/01_llm_exploration.ipynb)
+O que você vai aprender: como funciona uma chamada de API, streaming, conversa multi-turn e o efeito dos parâmetros.
+
+Passo a passo:
+
+Abra notebooks/00_setup_and_hello.ipynb → rode célula por célula (Shift+Enter)
+A última célula faz a primeira chamada ao Claude — confirma que a API funciona
+Abra notebooks/01_llm_exploration.ipynb
+Rode a seção "Efeito do Temperature" — observe como temperature=0 gera respostas quase idênticas e temperature=1.5 gera variação alta
+Rode "Streaming de Tokens" — veja os tokens chegando em tempo real
+Rode "Conversa Multi-turn" — faça duas perguntas encadeadas e veja que o modelo lembra do contexto
+Experimento prático: edite o system no chat e mude o persona. Compare como as respostas mudam.
+
+Módulo 2 — Embeddings (notebooks/05_embeddings_lab.ipynb)
+O que você vai aprender: como texto vira vetor, o que é similaridade cosseno, como clusters semânticos se formam.
+
+Passo a passo:
+
+Abra notebooks/05_embeddings_lab.ipynb
+Rode a seção "Similaridade Semântica" — observe os scores: frases sobre RAG têm score ~0.9 entre si, score ~0.1 com frases sobre culinária
+Rode "Busca Semântica" — faça uma query e veja os resultados rankeados
+Rode "Visualização t-SNE" — isso demora ~1 min na primeira vez (baixa o modelo). Vai gerar um PNG com 3 clusters coloridos
+Experimento prático: adicione suas próprias frases ao corpus e veja onde elas ficam no plot.
+
+Módulo 3 — Vector Store (notebooks/vector_store_lab.ipynb)
+O que você vai aprender: como armazenar vetores no ChromaDB e fazer buscas com filtros de metadados.
+
+Passo a passo:
+
+Abra notebooks/vector_store_lab.ipynb
+Rode "CRUD básico" — insere 4 documentos no ChromaDB
+Rode "Busca Semântica" — busca por similaridade vetorial
+Rode os dois blocos de "Filtros de Metadados":
+Primeiro: filtra por source == "paper" — só retorna documentos acadêmicos
+Segundo: filtra por year >= 2022 — só retorna documentos recentes
+Experimento prático: crie um filtro combinado $and com source=paper e year>=2020.
+
+Módulo 4 — RAG completo (notebooks/02_rag_walkthrough.ipynb)
+O que você vai aprender: o pipeline RAG completo passo a passo, do documento bruto à resposta gerada.
+
+Passo a passo:
+
+Abra notebooks/02_rag_walkthrough.ipynb
+Rode "Passo 1: Carregar Documento" — carrega o genai_concepts.md
+Rode "Passo 2: Chunking" — compara as 3 estratégias e conta quantos chunks cada uma gera
+Rode "Passo 3: Embeddings" — converte os chunks em vetores
+Rode "Passo 4: Armazenar no ChromaDB" — persiste os vetores
+Rode "Passo 5: Recuperar e Gerar" — faz uma pergunta, recupera os chunks mais relevantes, gera resposta com o Claude
+Ou via CLI (mais rápido para testar):
+
+
+# Terminal do Jupyter Lab
+python scripts/ingest_docs.py --dir modules/rag/data/sample_docs
+python scripts/run_rag_query.py --question "Quais as vantagens do RAG?" --show-sources
+python scripts/run_rag_query.py --question "O que é self-attention?"
+Módulo 5 — MCP (notebooks/03_mcp_demo.ipynb)
+O que você vai aprender: como o protocolo MCP funciona, como criar um servidor com tools e conectar um cliente.
+
+Passo a passo:
+
+Abra notebooks/03_mcp_demo.ipynb
+Rode "Schemas de Tools" — veja como Pydantic gera JSON Schema para as tools
+Rode "Conectar ao Servidor MCP" — esse bloco:
+Inicia o simple_server.py como subprocess automaticamente
+Lista as tools disponíveis
+Chama echo e add_numbers
+Fecha a conexão
+Experimento prático: abra modules/mcp/server/simple_server.py e adicione uma nova tool multiply(a, b). Rode o notebook de novo e chame a nova tool.
+
+Módulo 6 — Agents (notebooks/04_agents_playground.ipynb)
+O que você vai aprender: como o Claude usa tools nativamente, como o loop ReAct funciona.
+
+Passo a passo:
+
+Abra notebooks/04_agents_playground.ipynb
+Rode "Tools Individuais" — testa calculator e web_search diretamente
+Rode "Simple Agent" — Claude recebe a pergunta, decide usar a calculadora, retorna resultado
+Rode "ReAct Agent" — observe o loop: Thought → Action → Observation → Thought → Final Answer
+Via CLI:
+
+
+python scripts/run_agent.py --query "Quanto é 15% de 2450 mais a raiz quadrada de 169?"
+python scripts/run_agent.py --query "Pesquise o que é LLM e resuma em 3 pontos"
+Módulo 7 — Prompt Engineering (notebooks/07_prompt_engineering.ipynb)
+O que você vai aprender: como estruturar prompts para obter respostas melhores.
+
+Passo a passo:
+
+Abra notebooks/07_prompt_engineering.ipynb
+Rode "Chain-of-Thought" — compare Zero-shot CoT vs Few-shot CoT no mesmo problema matemático
+Rode "Self-Consistency" — roda 3 amostras e retorna a resposta mais frequente com score de confiança
+Rode "Structured Output" — força a resposta em JSON com campos answer, confidence, reasoning
+Rode "Prompt Library" — mostra o template RAG renderizado com dados reais
+Experimento prático: modifique o template em modules/prompt_engineering/prompt_library.py, adicione um campo language e force a resposta sempre em inglês.
+
+Módulo 8 — Avaliação (notebooks/08_evaluation_suite.ipynb)
+O que você vai aprender: como medir objetivamente a qualidade das respostas.
+
+⚠️ Este módulo requer créditos na API. Pule por enquanto e volte após adicionar créditos.
+
+Passo a passo (quando tiver créditos):
+
+Indexe os documentos primeiro: python scripts/ingest_docs.py --dir modules/rag/data/sample_docs
+Abra notebooks/08_evaluation_suite.ipynb
+Rode "Métricas de String" — ROUGE e F1 não precisam de API
+Rode "Similaridade Semântica" — também não precisa de API (usa embeddings locais)
+Rode "LLM-as-Judge" — precisa de API, avalia faithfulness/relevance/coherence de 1-5
+Rode "Avaliação Completa do RAG" — roda as 20 perguntas do dataset e gera relatório
+Via CLI:
+
+
+python scripts/run_eval.py --output modules/evaluation/reports/run_001.json
+Trilha resumida para começar agora (sem créditos)
+
+1. notebooks/00_setup_and_hello.ipynb    → confirma instalação
+2. notebooks/05_embeddings_lab.ipynb     → embeddings e visualização (local, sem API)
+3. notebooks/vector_store_lab.ipynb   → ChromaDB (local, sem API)
+4. Aguardar créditos na API →
+5. notebooks/01_llm_exploration.ipynb    → LLM
+6. notebooks/02_rag_walkthrough.ipynb    → RAG completo
+7. notebooks/04_agents_playground.ipynb  → Agentes
+8. notebooks/07_prompt_engineering.ipynb → Técnicas de prompt
+9. notebooks/08_evaluation_suite.ipynb   → Avaliação

@@ -1,0 +1,45 @@
+MECANISMO DE ATENÇÃO EM TRANSFORMERS
+Baseado em: "Attention Is All You Need" (Vaswani et al., 2017)
+
+INTRODUÇÃO
+O mecanismo de atenção permite que modelos de sequência pesem a importância relativa de diferentes partes da entrada ao gerar cada parte da saída. Diferente de RNNs, que processam sequências de forma serial, Transformers processam toda a sequência em paralelo, o que permite treinamento muito mais eficiente em GPUs modernas.
+
+ATENÇÃO SCALED DOT-PRODUCT
+O cálculo fundamental de atenção é:
+  Attention(Q, K, V) = softmax(QK^T / sqrt(d_k)) V
+
+Onde:
+- Q (Query): o que estamos procurando
+- K (Key): o que cada posição "oferece" para ser encontrado
+- V (Value): a informação real de cada posição
+- d_k: dimensão das chaves (fator de escala para estabilidade numérica)
+
+O resultado é uma média ponderada dos Values, onde os pesos são determinados pela compatibilidade entre Queries e Keys.
+
+ATENÇÃO MULTI-HEAD
+Em vez de calcular uma atenção única, Multi-Head Attention projeta Q, K, V em h espaços diferentes (cabeças) e calcula atenção em paralelo:
+
+  MultiHead(Q, K, V) = Concat(head_1, ..., head_h) W^O
+  onde head_i = Attention(Q W_i^Q, K W_i^K, V W_i^V)
+
+Isso permite que o modelo atenda a informações de diferentes subespaços de representação simultaneamente.
+
+SELF-ATTENTION
+Em self-attention, Q, K e V vêm todos da mesma sequência. Isso permite que cada posição atenda a todas as outras posições na mesma sequência, capturando dependências de longo alcance independentemente da distância.
+
+CROSS-ATTENTION
+Em cross-attention (usada no decoder de Transformers encoder-decoder), as Queries vêm do decoder e as Keys e Values vêm do encoder. Isso permite que o decoder atenda à sequência de entrada ao gerar a saída.
+
+CODIFICAÇÃO POSICIONAL
+Como o Transformer não tem recorrência nem convolução, ele não tem noção intrínseca de ordem sequencial. Embeddings posicionais são adicionados aos embeddings de token para injetar informação de posição.
+
+COMPLEXIDADE COMPUTACIONAL
+Self-attention tem complexidade O(n²·d) em relação ao comprimento da sequência n e dimensão d. Isso é o gargalo para sequências muito longas, motivando pesquisa em atenção eficiente (Linformer, Longformer, Flash Attention).
+
+APLICAÇÕES
+O mecanismo de atenção é fundamental para:
+- Tradução automática (o caso de uso original)
+- Modelos de linguagem (GPT, Claude, Llama)
+- Visão computacional (Vision Transformer - ViT)
+- Bioinformática (AlphaFold usa atenção para proteínas)
+- Processamento de áudio (Whisper da OpenAI)

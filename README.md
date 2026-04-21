@@ -35,7 +35,7 @@ cp .env.example .env
 pip install -e ".[dev]"
 
 # 4. Validar setup
-python scripts/setup_env.py
+python -m scripts.setup_env
 
 # 5. Primeiro teste — chamada ao Claude
 python -m modules.llm.basic_completion
@@ -47,9 +47,9 @@ jupyter lab
 
 cp .env.example .env # adicione sua ANTHROPIC_API_KEY
 pip install -r requirements-dev.txt
-python scripts/setup_env.py # valida tudo
-python scripts/ingest_docs.py --dir modules/rag/data/sample_docs
-python scripts/run_rag_query.py --question "O que é RAG?"
+python -m scripts.setup_env # valida tudo
+python -m scripts.ingest_docs --dir modules/rag/data/sample_docs
+python -m scripts.run_rag_query --question "O que é RAG?"
 jupyter lab # abra notebooks/00_setup_and_hello.ipynb
 
 ## Trilha de Aprendizado
@@ -89,16 +89,16 @@ ProjetoInicial/
 
 ```bash
 # Indexar documentos no ChromaDB
-python scripts/ingest_docs.py --dir modules/rag/data/sample_docs
+python -m scripts.ingest_docs --dir modules/rag/data/sample_docs
 
 # Fazer uma pergunta com RAG
-python scripts/run_rag_query.py --question "O que é o mecanismo de atenção?"
+python -m scripts.run_rag_query --question "O que é o mecanismo de atenção?"
 
 # Rodar agente ReAct
-python scripts/run_agent.py --query "Pesquise e explique o que é RAG"
+python -m scripts.run_agent --query "Pesquise e explique o que é RAG"
 
 # Executar suite de avaliação
-python scripts/run_eval.py --output modules/evaluation/reports/run_001.json
+python -m scripts.run_eval --output modules/evaluation/reports/run_001.json
 ```
 
 ## Rodando os Testes
@@ -111,3 +111,5 @@ pytest tests/ -v
 
 Este projeto implementa **tudo via primitivos**, sem depender de LangChain ou LlamaIndex nos módulos. O objetivo é entender o que esses frameworks fazem internamente antes de usá-los. Cada README de módulo explica o conceito, mostra a implementação primitiva e, ao final, compara com o equivalente em frameworks populares.
 # estudo-genai
+
+

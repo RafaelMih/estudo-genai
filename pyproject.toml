@@ -1,0 +1,77 @@
+[project]
+name = "genai-study-project"
+version = "0.1.0"
+description = "Projeto de estudos hands-on do ecossistema completo de IA Generativa"
+requires-python = ">=3.10"
+dependencies = [
+    # Core
+    "anthropic>=0.40.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.0.0",
+    "rich>=13.0.0",
+    # LLM extras
+    "tiktoken>=0.7.0",
+    "Pillow>=10.0.0",
+    # RAG / document loading
+    "pypdf>=4.0.0",
+    "python-docx>=1.0.0",
+    "nltk>=3.8.0",
+    "langchain-text-splitters>=0.2.0",
+    # MCP
+    "mcp>=1.0.0",
+    "anyio>=4.0.0",
+    "httpx>=0.27.0",
+    # Agents
+    "ddgs>=0.1.0",
+    "RestrictedPython>=7.0.0",
+    # Embeddings
+    "sentence-transformers>=3.0.0",
+    "torch>=2.3.0",
+    "scikit-learn>=1.5.0",
+    "matplotlib>=3.9.0",
+    "numpy>=1.26.0",
+    # Vector store
+    "chromadb>=0.5.0",
+    # Prompt engineering
+    "jinja2>=3.1.0",
+    # Eval
+    "rouge-score>=0.1.2",
+    "bert-score>=0.3.13",
+    "pandas>=2.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "jupyter>=1.0.0",
+    "ipykernel>=6.0.0",
+    "nbformat>=5.0.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-mock>=3.14.0",
+    "black>=24.0.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+genai-setup = "scripts.setup_env:main"
+genai-ingest = "scripts.ingest_docs:main"
+genai-rag = "scripts.run_rag_query:main"
+genai-agent = "scripts.run_agent:main"
+genai-eval = "scripts.run_eval:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["shared*", "modules*", "scripts*"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

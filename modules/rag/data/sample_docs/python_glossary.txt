@@ -1,0 +1,44 @@
+GLOSSÁRIO PYTHON PARA DESENVOLVIMENTO DE IA
+
+DECORADORES (@)
+Decoradores são funções que modificam o comportamento de outras funções. Em projetos de IA, são amplamente usados para caching, logging e instrumentação.
+Exemplo: @functools.lru_cache(maxsize=128) adiciona cache automático a uma função.
+
+GENERATORS E YIELD
+Generators são funções que produzem valores sob demanda usando yield, em vez de retornar tudo de uma vez. Essenciais para processar grandes datasets sem carregar tudo na memória.
+Em LLMs, o streaming de tokens é implementado como um generator.
+
+TYPING E PROTOCOLS
+O módulo typing do Python 3.10+ permite definir tipos estáticos. Protocol permite definir interfaces structurais (duck typing). Usado neste projeto para Embedder e VectorStore.
+
+PYDANTIC
+Biblioteca para validação de dados e configuração usando type hints. BaseModel valida dados em runtime. BaseSettings (pydantic-settings) carrega configuração de variáveis de ambiente.
+
+ASYNCIO E ANYIO
+Python suporta programação assíncrona via asyncio. anyio é uma camada de abstração que funciona com asyncio e trio. O SDK do MCP usa anyio para suporte a múltiplos backends.
+
+CONTEXT MANAGERS (WITH)
+Context managers gerenciam recursos automaticamente. Em streaming de LLMs, o padrão with client.messages.stream() garante que o stream seja fechado ao final.
+
+DATACLASSES E NAMEDTUPLE
+Para estruturas de dados simples sem lógica. Preferível a dicts para dados com schema fixo, pois oferece type checking e autocomplete em IDEs.
+
+F-STRINGS E STRING FORMATTING
+f-strings (Python 3.6+) são a forma mais legível de formatar strings. Para templates complexos de prompt, Jinja2 oferece mais flexibilidade (loops, condicionais, herança).
+
+PATHLIB
+O módulo pathlib.Path oferece orientação a objetos para manipulação de caminhos de arquivo, superior ao os.path. Usado extensivamente em document_loader.py para carregar arquivos.
+
+LOGGING
+O módulo logging é preferível ao print() em código de produção. O projeto usa rich.logging.RichHandler para output colorido e formatado. Configurável via variável LOG_LEVEL.
+
+LIST COMPREHENSIONS E MAP/FILTER
+Python favorece list comprehensions sobre loops explícitos para transformações simples:
+  embeddings = [model.encode(text) for text in texts]
+Para operações paralelas em batches, usar embed_batch() é mais eficiente que list comprehension.
+
+NUMPY E OPERAÇÕES VETORIAIS
+NumPy é fundamental para operações numéricas em IA. Arrays NumPy são a representação interna de embeddings. tolist() converte para listas Python puras quando necessário para APIs como ChromaDB.
+
+VIRTUAL ENVIRONMENTS
+Sempre use ambientes virtuais para isolamento de dependências. Com pip: python -m venv .venv && .venv\Scripts\activate (Windows).

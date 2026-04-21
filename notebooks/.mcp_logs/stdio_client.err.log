@@ -1,0 +1,44 @@
+  + Exception Group Traceback (most recent call last):
+  |   File "C:\Desenvolvimento\IA\Aprendizado\ProjetoInicial\modules\mcp\server\simple_server.py", line 68, in <module>
+  |     asyncio.run(main())
+  |     ~~~~~~~~~~~^^^^^^^^
+  |   File "C:\Desenvolvimento\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+  |     return runner.run(main)
+  |            ~~~~~~~~~~^^^^^^
+  |   File "C:\Desenvolvimento\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+  |     return self._loop.run_until_complete(task)
+  |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  |   File "C:\Desenvolvimento\Python\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+  |     return future.result()
+  |            ~~~~~~~~~~~~~^^
+  |   File "C:\Desenvolvimento\IA\Aprendizado\ProjetoInicial\modules\mcp\server\simple_server.py", line 52, in main
+  |     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
+  |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "C:\Desenvolvimento\Python\Python313\Lib\contextlib.py", line 235, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Desenvolvimento\Python\Python313\Lib\site-packages\mcp\server\stdio.py", line 85, in stdio_server
+  |     async with anyio.create_task_group() as tg:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "C:\Desenvolvimento\Python\Python313\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "C:\Desenvolvimento\Python\Python313\Lib\site-packages\mcp\server\stdio.py", line 88, in stdio_server
+    |     yield read_stream, write_stream
+    |   File "C:\Desenvolvimento\IA\Aprendizado\ProjetoInicial\modules\mcp\server\simple_server.py", line 59, in main
+    |     capabilities=app.get_capabilities(
+    |                  ~~~~~~~~~~~~~~~~~~~~^
+    |         notification_options=None,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |         experimental_capabilities={},
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ),
+    |     ^
+    |   File "C:\Desenvolvimento\Python\Python313\Lib\site-packages\mcp\server\lowlevel\server.py", line 217, in get_capabilities
+    |     tools_capability = types.ToolsCapability(listChanged=notification_options.tools_changed)
+    |                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    | AttributeError: 'NoneType' object has no attribute 'tools_changed'
+    +------------------------------------
