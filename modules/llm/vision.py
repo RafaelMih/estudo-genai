@@ -1,15 +1,21 @@
-"""Demonstra entrada multimodal: enviar imagem ao Claude."""
+"""Demonstra entrada multimodal: enviar imagem ao provider configurado."""
 
 import argparse
 import base64
 from pathlib import Path
 
-from shared.llm_client import build_client
+from shared.llm_client import ANTHROPIC_PROVIDER, OPENAI_PROVIDER, build_client
 from shared.logger import get_logger
 
 log = get_logger(__name__)
 
-SUPPORTED_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".gif": "image/gif", ".webp": "image/webp"}
+SUPPORTED_TYPES = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+}
 
 
 def encode_image(path: Path) -> tuple[str, str]:
@@ -22,9 +28,14 @@ def encode_image(path: Path) -> tuple[str, str]:
     return data, media_type
 
 
-def describe_image(image_path: Path, prompt: str = "Descreva esta imagem detalhadamente.") -> str:
+def describe_image(
+    image_path: Path,
+    prompt: str = "Descreva esta imagem detalhadamente.",
+    provider: str | None = None,
+    model: str | None = None,
+) -> str:
     data, media_type = encode_image(image_path)
-    client = build_client()
+    client = build_client(provider=provider, model=model)
     messages = [
         {
             "role": "user",
@@ -45,9 +56,11 @@ def describe_image(image_path: Path, prompt: str = "Descreva esta imagem detalha
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Envia imagem ao Claude para análise")
+    parser = argparse.ArgumentParser(description="Envia imagem ao provider LLM para análise")
     parser.add_argument("--image", required=True, help="Caminho para a imagem")
     parser.add_argument("--prompt", default="Descreva esta imagem detalhadamente.", help="Pergunta sobre a imagem")
+    parser.add_argument("--provider", choices=[ANTHROPIC_PROVIDER, OPENAI_PROVIDER], help="Provider LLM")
+    parser.add_argument("--model", help="Modelo LLM")
     args = parser.parse_args()
 
     image_path = Path(args.image)
@@ -55,8 +68,9 @@ def main() -> None:
         print(f"Arquivo não encontrado: {image_path}")
         return
 
-    log.info(f"Enviando {image_path.name} ao Claude...")
-    response = describe_image(image_path, args.prompt)
+    client = build_client(provider=args.provider, model=args.model)
+    log.info(f"Enviando {image_path.name} para {client.provider}/{client.model}...")
+    response = describe_image(image_path, args.prompt, provider=args.provider, model=args.model)
     print("\nResposta:")
     print(response)
 

@@ -33,7 +33,7 @@ class Conversation:
 
 def main() -> None:
     conv = Conversation()
-    print("Conversa multi-turn com Claude. Digite '/clear' para resetar, '/quit' para sair.\n")
+    print("Conversa multi-turn com o provider configurado. Digite '/clear' para resetar, '/quit' para sair.\n")
 
     while True:
         try:
@@ -51,7 +51,7 @@ def main() -> None:
             continue
 
         response = conv.send(user_input)
-        print(f"\nClaude: {response}\n")
+        print(f"\nAssistente: {response}\n")
 
 
 if __name__ == "__main__":

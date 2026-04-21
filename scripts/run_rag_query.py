@@ -3,6 +3,7 @@
 import argparse
 
 from modules.rag.pipeline import RAGPipeline
+from shared.llm_client import ANTHROPIC_PROVIDER, OPENAI_PROVIDER, build_client
 from shared.logger import get_logger
 
 log = get_logger(__name__)
@@ -14,9 +15,15 @@ def main() -> None:
     parser.add_argument("--collection", default="rag_docs", help="Collection ChromaDB a usar")
     parser.add_argument("--top-k", type=int, default=5, help="Número de chunks a recuperar")
     parser.add_argument("--show-sources", action="store_true", help="Mostrar chunks recuperados")
+    parser.add_argument("--provider", choices=[ANTHROPIC_PROVIDER, OPENAI_PROVIDER], help="Provider LLM")
+    parser.add_argument("--model", help="Modelo LLM")
     args = parser.parse_args()
 
-    pipeline = RAGPipeline(collection_name=args.collection, top_k=args.top_k)
+    pipeline = RAGPipeline(
+        collection_name=args.collection,
+        top_k=args.top_k,
+        llm=build_client(provider=args.provider, model=args.model),
+    )
     result = pipeline.query(args.question)
 
     print(f"\nQ: {result['question']}")

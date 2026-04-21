@@ -7,6 +7,7 @@ from pathlib import Path
 
 from modules.evaluation.rag_eval import RAGEvaluator
 from modules.rag.pipeline import RAGPipeline
+from shared.llm_client import ANTHROPIC_PROVIDER, OPENAI_PROVIDER, build_client
 from shared.logger import get_logger
 
 log = get_logger(__name__)
@@ -16,12 +17,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Roda suite de avaliação RAG")
     parser.add_argument("--output", default="modules/evaluation/reports/eval_run.json", help="Arquivo de saída JSON")
     parser.add_argument("--collection", default="rag_docs", help="Collection ChromaDB a usar")
+    parser.add_argument("--provider", choices=[ANTHROPIC_PROVIDER, OPENAI_PROVIDER], help="Provider LLM")
+    parser.add_argument("--model", help="Modelo LLM")
     args = parser.parse_args()
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    pipeline = RAGPipeline(collection_name=args.collection)
+    pipeline = RAGPipeline(
+        collection_name=args.collection,
+        llm=build_client(provider=args.provider, model=args.model),
+    )
     evaluator = RAGEvaluator()
 
     log.info("Iniciando avaliação do pipeline RAG...")

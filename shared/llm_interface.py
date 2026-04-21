@@ -1,11 +1,35 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from dataclasses import dataclass
 from typing import Any, Protocol, runtime_checkable
+
+
+@dataclass(slots=True)
+class TextBlock:
+    type: str
+    text: str
+
+
+@dataclass(slots=True)
+class ToolUseBlock:
+    type: str
+    id: str
+    name: str
+    input: dict[str, Any]
+
+
+@dataclass(slots=True)
+class ToolResponse:
+    stop_reason: str
+    content: list[TextBlock | ToolUseBlock]
 
 
 @runtime_checkable
 class LLM(Protocol):
+    provider: str
+    model: str
+
     def complete(
         self,
         messages: list[dict[str, Any]],
@@ -21,7 +45,7 @@ class LLM(Protocol):
         tools: list[dict[str, Any]],
         system: str = "",
         max_tokens: int = 1024,
-    ) -> Any: ...
+    ) -> ToolResponse: ...
 
     def stream(
         self,

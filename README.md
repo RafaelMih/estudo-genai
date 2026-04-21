@@ -1,6 +1,6 @@
-﻿# GenAI Study Project
+# GenAI Study Project
 
-> Projeto de estudos hands-on do ecossistema completo de IA Generativa usando Anthropic Claude (`claude-sonnet-4-6`) como LLM backbone.
+> Projeto de estudos hands-on do ecossistema completo de IA Generativa com provider LLM configurável: Anthropic/Claude ou OpenAI/Codex.
 
 ## O que você vai aprender
 
@@ -18,7 +18,9 @@
 ## Pré-requisitos
 
 - Python 3.10+
-- Chave de API Anthropic ([console.anthropic.com](https://console.anthropic.com))
+- Chave de API do provider desejado:
+  - Anthropic: https://console.anthropic.com
+  - OpenAI: https://platform.openai.com
 - ~4 GB de espaço em disco (modelos de embedding locais)
 
 ## Quick Start (5 minutos)
@@ -29,7 +31,7 @@ cd ProjetoInicial
 
 # 2. Configurar ambiente
 cp .env.example .env
-# Edite .env e adicione sua ANTHROPIC_API_KEY
+# Edite .env e configure LLM_PROVIDER + chave correspondente
 
 # 3. Instalar dependências (instala o projeto em modo editável)
 pip install -e ".[dev]"
@@ -37,7 +39,7 @@ pip install -e ".[dev]"
 # 4. Validar setup
 python -m scripts.setup_env
 
-# 5. Primeiro teste — chamada ao Claude
+# 5. Primeiro teste
 python -m modules.llm.basic_completion
 
 # 6. Abrir notebooks interativos
@@ -45,41 +47,34 @@ jupyter lab
 # → abra notebooks/00_setup_and_hello.ipynb
 ```
 
-cp .env.example .env # adicione sua ANTHROPIC_API_KEY
-pip install -r requirements-dev.txt
-python -m scripts.setup_env # valida tudo
-python -m scripts.ingest_docs --dir modules/rag/data/sample_docs
-python -m scripts.run_rag_query --question "O que é RAG?"
-jupyter lab # abra notebooks/00_setup_and_hello.ipynb
+Exemplos de configuração:
 
-## Trilha de Aprendizado
+```bash
+# Anthropic / Claude
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+LLM_MODEL=claude-sonnet-4-6
 
-```
-INICIANTE ──► 01_llm ──► 07_prompt_engineering ──► 05_embeddings
-                                                          │
-INTERMEDIÁRIO ◄──────── vector_store ◄────────────────┘
-     │
-     └──► 02_rag ──► 08_eval
-                         │
-AVANÇADO ◄───────────────┘
-   │
-   └──► 03_mcp ──► 04_agents ──► construa o seu próprio módulo
+# OpenAI / Codex-compatible
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+LLM_MODEL=gpt-4.1-mini
 ```
 
 ## Estrutura do Projeto
 
-```
+```text
 ProjetoInicial/
 ├── shared/                  # Código compartilhado (config, LLM client, utils)
 ├── modules/
-│   ├── llm/              # Large Language Models
-│   ├── rag/              # Retrieval-Augmented Generation
-│   ├── mcp/              # Model Context Protocol
-│   ├── agents/           # Agentes autônomos
-│   ├── embeddings/       # Embeddings e similaridade
-│   ├── vector_store/     # ChromaDB e busca vetorial
+│   ├── llm/                 # Large Language Models
+│   ├── rag/                 # Retrieval-Augmented Generation
+│   ├── mcp/                 # Model Context Protocol
+│   ├── agents/              # Agentes autônomos
+│   ├── embeddings/          # Embeddings e similaridade
+│   ├── vector_store/        # ChromaDB e busca vetorial
 │   ├── prompt_engineering/  # Engenharia de prompts
-│   └── evaluation/             # Avaliação e métricas
+│   └── evaluation/          # Avaliação e métricas
 ├── notebooks/               # Jupyter notebooks interativos
 ├── scripts/                 # CLIs: ingest, query, agent, eval
 └── tests/                   # Testes unitários com mocks
@@ -93,6 +88,9 @@ python -m scripts.ingest_docs --dir modules/rag/data/sample_docs
 
 # Fazer uma pergunta com RAG
 python -m scripts.run_rag_query --question "O que é o mecanismo de atenção?"
+
+# Provider/modelo podem ser sobrescritos por CLI
+python -m scripts.run_rag_query --provider openai --model gpt-4.1-mini --question "O que é RAG?"
 
 # Rodar agente ReAct
 python -m scripts.run_agent --query "Pesquise e explique o que é RAG"
@@ -109,7 +107,4 @@ pytest tests/ -v
 
 ## Filosofia do Projeto
 
-Este projeto implementa **tudo via primitivos**, sem depender de LangChain ou LlamaIndex nos módulos. O objetivo é entender o que esses frameworks fazem internamente antes de usá-los. Cada README de módulo explica o conceito, mostra a implementação primitiva e, ao final, compara com o equivalente em frameworks populares.
-# estudo-genai
-
-
+Este projeto implementa **tudo via primitivos**, sem depender de LangChain ou LlamaIndex nos módulos. O objetivo é entender o que esses frameworks fazem internamente antes de usá-los. Cada README de módulo explica o conceito, mostra a implementação primitiva e, quando fizer sentido, destaca diferenças entre providers.

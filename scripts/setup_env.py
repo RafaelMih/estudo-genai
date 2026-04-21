@@ -1,48 +1,69 @@
 """Valida que o ambiente está configurado corretamente."""
 
+import argparse
 import sys
+
+from shared.config import settings
+from shared.llm_client import ANTHROPIC_PROVIDER, OPENAI_PROVIDER, build_client
+
+
+def resolve_provider(cli_provider: str | None) -> str:
+    return (cli_provider or settings.llm_provider or ANTHROPIC_PROVIDER).strip().lower()
 
 
 def check_dotenv() -> bool:
     from pathlib import Path
 
     if not Path(".env").exists():
-        print("✗ .env não encontrado. Copie .env.example → .env e adicione ANTHROPIC_API_KEY")
+        print("✗ .env não encontrado. Copie .env.example → .env e configure o provider desejado.")
         return False
     print("✓ .env encontrado")
     return True
 
 
-def check_api_key() -> bool:
+def check_api_key(provider: str) -> bool:
     try:
-        from shared.config import settings
+        if provider == ANTHROPIC_PROVIDER:
+            key = settings.anthropic_api_key
+            if not key or key.startswith("sk-ant-..."):
+                print("✗ ANTHROPIC_API_KEY inválida ou não configurada")
+                return False
+            print(f"✓ ANTHROPIC_API_KEY configurada ({key[:12]}...)")
+            return True
 
-        key = settings.anthropic_api_key
-        if not key or key.startswith("sk-ant-..."):
-            print("✗ ANTHROPIC_API_KEY inválida ou não configurada")
-            return False
-        print(f"✓ ANTHROPIC_API_KEY configurada ({key[:12]}...)")
-        return True
+        if provider == OPENAI_PROVIDER:
+            key = settings.openai_api_key
+            if not key or key.startswith("sk-..."):
+                print("✗ OPENAI_API_KEY inválida ou não configurada")
+                return False
+            print(f"✓ OPENAI_API_KEY configurada ({key[:12]}...)")
+            return True
+
+        print(f"✗ Provider inválido: {provider}")
+        return False
     except Exception as e:
         print(f"✗ Erro ao carregar config: {e}")
         return False
 
 
-def check_api_connection() -> bool:
+def check_api_connection(provider: str, model: str | None) -> bool:
     try:
-        from shared.llm_client import build_client
-
-        client = build_client()
+        client = build_client(provider=provider, model=model)
         response = client.complete([{"role": "user", "content": "Diga apenas: OK"}], max_tokens=10)
-        print(f"✓ Conexão com Anthropic API: {response.strip()}")
+        print(f"✓ Conexão com {client.provider}/{client.model}: {response.strip()}")
         return True
     except Exception as e:
         print(f"✗ Erro na conexão com API: {e}")
         return False
 
 
-def check_packages() -> bool:
-    required = ["anthropic", "chromadb", "sentence_transformers", "rich", "pydantic"]
+def check_packages(provider: str) -> bool:
+    required = ["chromadb", "sentence_transformers", "rich", "pydantic"]
+    if provider == ANTHROPIC_PROVIDER:
+        required.insert(0, "anthropic")
+    elif provider == OPENAI_PROVIDER:
+        required.insert(0, "openai")
+
     all_ok = True
     for pkg in required:
         try:
@@ -55,17 +76,26 @@ def check_packages() -> bool:
 
 
 def main() -> None:
-    print("=== Validação do Ambiente GenAI Study Project ===\n")
+    parser = argparse.ArgumentParser(description="Valida o ambiente do projeto")
+    parser.add_argument("--provider", choices=[ANTHROPIC_PROVIDER, OPENAI_PROVIDER], help="Provider LLM a validar")
+    parser.add_argument("--model", help="Modelo a validar")
+    args = parser.parse_args()
 
-    print("[ Pacotes Python ]")
-    pkg_ok = check_packages()
+    provider = resolve_provider(args.provider)
+
+    print("=== Validação do Ambiente GenAI Study Project ===\n")
+    print(f"Provider: {provider}")
+    print(f"Modelo: {args.model or settings.llm_model or '(default do provider)'}")
+
+    print("\n[ Pacotes Python ]")
+    pkg_ok = check_packages(provider)
 
     print("\n[ Configuração ]")
     env_ok = check_dotenv()
-    key_ok = check_api_key() if env_ok else False
+    key_ok = check_api_key(provider) if env_ok else False
 
     print("\n[ Conectividade ]")
-    api_ok = check_api_connection() if key_ok else False
+    api_ok = check_api_connection(provider, args.model) if key_ok else False
 
     print("\n" + "=" * 50)
     if all([pkg_ok, env_ok, key_ok, api_ok]):

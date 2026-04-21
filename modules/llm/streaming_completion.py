@@ -26,7 +26,7 @@ def main() -> None:
     system = "Você é um assistente especializado em IA. Responda de forma detalhada."
     question = "Explique como funciona o mecanismo de atenção (attention) em Transformers, passo a passo."
 
-    print("\nStreaming resposta do Claude...\n")
+    print("\nStreaming resposta do provider configurado...\n")
     print("=" * 60)
     response = stream_response(question, system=system)
     print("=" * 60)
